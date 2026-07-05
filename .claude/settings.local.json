@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(cd:*)",
-      "Bash(cd /c/Users/jaxon/code/cd-player && npm test -- stage 2>&122222)"
-    ]
-  }
-}
