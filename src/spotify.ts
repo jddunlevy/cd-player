@@ -43,8 +43,8 @@ export function parseNowPlaying(json: unknown, fetchedAt: number): NowPlaying | 
     title: item.name,
     artist:
       type === 'track'
-        ? (item.artists as { name: string }[]).map((a) => a.name).join(', ')
-        : item.show.name,
+        ? ((item.artists ?? []) as { name: string }[]).map((a) => a.name).join(', ')
+        : item.show?.name ?? '',
     artUrl: largest(type === 'track' ? item.album?.images : item.images),
     durationMs: item.duration_ms,
     progressMs: j.progress_ms ?? 0,

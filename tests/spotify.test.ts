@@ -37,6 +37,14 @@ describe('parseNowPlaying', () => {
     expect(parseNowPlaying(null, T)).toBeNull();
     expect(parseNowPlaying({}, T)).toBeNull();
   });
+  it('tolerates a track with missing artists', () => {
+    const broken = { ...track, item: { ...track.item, artists: undefined } };
+    expect(parseNowPlaying(broken, T)!.artist).toBe('');
+  });
+  it('tolerates an episode with missing show', () => {
+    const broken = { ...episode, item: { ...episode.item, show: undefined } };
+    expect(parseNowPlaying(broken, T)!.artist).toBe('');
+  });
 });
 
 function mockFetch(status: number, body?: unknown, headers?: Record<string, string>) {
