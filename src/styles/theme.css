@@ -1,0 +1,20 @@
+@font-face { /* provided by @fontsource import in main.ts */ }
+
+:root {
+  --bg: #d4e3c0;
+  --surface: #e8efd9;
+  --text: #2d3a1f;
+  --muted: #5a6b46;
+  --accent: #3d5a2a;
+  --mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #0d1208; /* letterbox bars darker than stage */
+  font-family: var(--mono);
+  color: var(--text);
+}

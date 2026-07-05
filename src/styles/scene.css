@@ -1,0 +1,47 @@
+#stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2560px;
+  height: 1440px;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center center;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, var(--surface) 0%, var(--bg) 70%, #c3d4ad 100%);
+}
+
+#stage > * { position: absolute; }
+
+/* Layer stack (z-index): stage gradient, holder 10, tray 20, player 30, lcd 40 */
+#holder  { z-index: 10; left: 1880px; top: 480px;  width: 480px;  height: 720px; }
+#tray    { z-index: 20; left: 640px;  top: 560px;  width: 900px;  height: 560px; }
+#player  { z-index: 30; left: 480px;  top: 280px;  width: 1280px; height: 900px; pointer-events: none; }
+#lcd     { z-index: 40; left: 640px;  top: 980px;  width: 1280px; height: 384px;
+           image-rendering: pixelated; }
+
+/* Positions above are placeholder-era guesses; retune when real cutouts land. */
+
+#auth-gate {
+  z-index: 50;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+#auth-gate[hidden] { display: none; }
+
+#auth-button {
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--text);
+  padding: 12px 48px;
+  cursor: pointer;
+  transition: color 80ms, background-color 80ms;
+}
+#auth-button:hover { background: var(--accent); color: var(--surface); }

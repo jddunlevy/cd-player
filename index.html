@@ -5,6 +5,22 @@
   <title>CD PLAYER</title>
 </head>
 <body>
+  <div id="stage">
+    <img id="holder" alt="" draggable="false" />
+    <div id="tray">
+      <div id="disc">
+        <img id="art-a" class="art" alt="" draggable="false" />
+        <img id="art-b" class="art" alt="" draggable="false" />
+        <div id="disc-rim"></div>
+        <div id="disc-hole"></div>
+      </div>
+    </div>
+    <img id="player" alt="" draggable="false" />
+    <canvas id="lcd" width="320" height="96"></canvas>
+    <div id="auth-gate">
+      <button id="auth-button">&#9654; CONNECT SPOTIFY</button>
+    </div>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
