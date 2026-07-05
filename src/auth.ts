@@ -18,8 +18,9 @@ export interface TokenResponse {
 }
 
 export function randomVerifier(length = 64): string {
+  // 64 chars: 256 % 64 === 0, so byte % length is uniform
   const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
   const bytes = crypto.getRandomValues(new Uint8Array(length));
   return Array.from(bytes, (b) => chars[b % chars.length]).join('');
 }
