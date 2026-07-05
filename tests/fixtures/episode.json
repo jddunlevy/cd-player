@@ -1,0 +1,14 @@
+{
+  "progress_ms": 120000,
+  "is_playing": true,
+  "currently_playing_type": "episode",
+  "item": {
+    "id": "512ojhOuo1ktJprKbVcKyQ",
+    "name": "Episode 42: The Answer",
+    "duration_ms": 3600000,
+    "show": { "name": "Deep Thoughts" },
+    "images": [
+      { "url": "https://i.scdn.co/image/ep640.jpg", "height": 640, "width": 640 }
+    ]
+  }
+}

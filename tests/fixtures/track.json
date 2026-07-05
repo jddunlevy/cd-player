@@ -1,0 +1,17 @@
+{
+  "progress_ms": 43000,
+  "is_playing": true,
+  "currently_playing_type": "track",
+  "item": {
+    "id": "4uLU6hMCjMI75M1A2tKUQC",
+    "name": "Never Gonna Give You Up",
+    "duration_ms": 213573,
+    "artists": [{ "name": "Rick Astley" }, { "name": "Guest Artist" }],
+    "album": {
+      "images": [
+        { "url": "https://i.scdn.co/image/640.jpg", "height": 640, "width": 640 },
+        { "url": "https://i.scdn.co/image/300.jpg", "height": 300, "width": 300 }
+      ]
+    }
+  }
+}
