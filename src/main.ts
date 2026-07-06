@@ -7,35 +7,43 @@ import {
 } from './auth';
 import { fetchNowPlaying, type NowPlaying } from './spotify';
 import { PlayerPoller, type DisplayState } from './player-state';
-import { Lcd } from './scene/lcd';
 import { Disc } from './scene/disc';
-import { Tray, changeDisc } from './scene/tray';
+import { panelText, statusFlag, progressFraction } from './scene/panel';
 
 const stage = document.getElementById('stage')!;
 fitStage(stage);
 
-const lcd = new Lcd(document.getElementById('lcd') as HTMLCanvasElement);
 const disc = new Disc(document.getElementById('disc')!);
-const tray = new Tray(document.getElementById('tray')!);
+const artistText = document.getElementById('artist-text')!;
+const trackText = document.getElementById('track-text')!;
+const statusEl = document.getElementById('status')!;
+const slider = document.getElementById('slider')!;
+const playBtn = document.getElementById('btn-play')!;
 const gate = document.getElementById('auth-gate')!;
 const authButton = document.getElementById('auth-button')!;
 
-let latest: DisplayState = { status: 'idle', np: null, progressMs: 0, stale: false };
 let shownArtId: string | null = null;
-let sequencing = false;
-let sequence = Promise.resolve();
+
+function showArt(np: NowPlaying): void {
+  if (shownArtId !== np.id) {
+    disc.setArt(np.artUrl);
+    shownArtId = np.id;
+  }
+}
 
 function applyState(s: DisplayState): void {
-  latest = s;
-  if (sequencing) return; // the tray sequence owns the disc right now
+  const text = panelText(s);
+  artistText.textContent = text.artist;
+  trackText.textContent = text.track;
+  statusEl.textContent = statusFlag(s);
+  slider.style.setProperty('--frac', progressFraction(s).toFixed(4));
+  playBtn.classList.toggle('lit', s.status === 'playing');
 
   switch (s.status) {
     case 'idle':
     case 'error':
-      if (!s.np) {
-        disc.setVisible(false);
-        shownArtId = null; // next track gets a direct art swap, no tray
-      }
+      disc.setVisible(false);
+      shownArtId = null;
       break;
     case 'ad':
       disc.setVisible(true);
@@ -47,39 +55,15 @@ function applyState(s: DisplayState): void {
       break;
     case 'paused':
       disc.setVisible(true);
-      showArtDirect(s.np!);
+      showArt(s.np!);
       disc.pause();
       break;
     case 'playing':
       disc.setVisible(true);
-      showArtDirect(s.np!);
+      showArt(s.np!);
       disc.play();
       break;
   }
-}
-
-/** First load / recovery from idle: art appears without the tray ceremony. */
-function showArtDirect(np: NowPlaying): void {
-  if (shownArtId === null) {
-    disc.setArt(np.artUrl);
-    shownArtId = np.id;
-  }
-}
-
-function onTrackChange(_prev: NowPlaying | null, next: NowPlaying): void {
-  // serialize sequences; rapid skips play out in order, never overlapping
-  sequence = sequence
-    .then(async () => {
-      sequencing = true;
-      try {
-        shownArtId = next.id;
-        await changeDisc(tray, disc, next.artUrl);
-      } finally {
-        sequencing = false;
-        applyState(latest); // reconcile with whatever happened meanwhile
-      }
-    })
-    .catch(() => {}); // prevent rejection from poisoning subsequent chain links
 }
 
 // hide cursor after 3s idle (it's a wall display)
@@ -101,20 +85,12 @@ async function boot(): Promise<void> {
   }
   gate.hidden = true;
 
-  await Promise.all([
-    document.fonts.load('24px VT323'),
-    document.fonts.load('16px VT323'),
-  ]);
-
   const poller = new PlayerPoller(
     () => fetchNowPlaying(getAccessToken),
     applyState,
-    onTrackChange,
+    () => {}, // art swaps are handled directly in applyState
   );
   poller.start();
-
-  let tick = 0;
-  setInterval(() => lcd.render(latest, (tick = (tick + 1) % 100_000)), 100);
 }
 
 void boot();

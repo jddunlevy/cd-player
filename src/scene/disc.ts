@@ -18,7 +18,7 @@ export function stepSpin(
   return { angleDeg, rps };
 }
 
-const FULL_RPS = 0.55; // ~1.8s per revolution
+const FULL_RPS = 0.275; // ~3.6s per revolution
 
 export class Disc {
   private state: SpinState = { angleDeg: 0, rps: 0 };

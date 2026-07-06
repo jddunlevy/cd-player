@@ -6,17 +6,48 @@
 </head>
 <body>
   <div id="stage">
-    <img id="holder" src="/assets/holder-placeholder.svg" alt="" draggable="false" />
-    <div id="tray">
-      <div id="disc">
-        <img id="art-a" class="art" alt="" draggable="false" />
-        <img id="art-b" class="art" alt="" draggable="false" />
-        <div id="disc-rim"></div>
-        <div id="disc-hole"></div>
+    <div id="window">
+      <div id="titlebar">
+        <span id="window-title">&#8857; CD PLAYER</span>
+        <span id="status"></span>
+        <span id="tb-buttons">
+          <span class="tb-btn">&#9472;</span>
+          <span class="tb-btn">&#9633;</span>
+          <span class="tb-btn">&#10005;</span>
+        </span>
+      </div>
+      <div id="window-body">
+        <div id="art-well">
+          <div id="disc">
+            <img id="art-a" class="art" alt="" draggable="false" />
+            <img id="art-b" class="art" alt="" draggable="false" />
+            <div id="disc-rim"></div>
+            <div id="disc-hole"></div>
+          </div>
+        </div>
+        <div id="panel">
+          <div class="field-row">
+            <span class="field-label">ARTIST:</span>
+            <span class="field-box"><span id="artist-text">&#8212;</span><span class="field-arrow">&#9660;</span></span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">TRACK:</span>
+            <span class="field-box"><span id="track-text">NO DISC</span><span class="field-arrow">&#9660;</span></span>
+          </div>
+          <div id="slider">
+            <div id="slider-line"></div>
+            <div id="slider-thumb"></div>
+          </div>
+          <div id="transport">
+            <button class="t-btn" tabindex="-1">&#9664;&#9664;</button>
+            <button class="t-btn" tabindex="-1">&#9654;&#9654;</button>
+            <button class="t-btn" id="btn-play" tabindex="-1">&#9654;</button>
+            <button class="t-btn" tabindex="-1">&#9632;</button>
+            <button class="t-btn" tabindex="-1">&#9679;</button>
+          </div>
+        </div>
       </div>
     </div>
-    <img id="player" src="/assets/player-placeholder.svg" alt="" draggable="false" />
-    <canvas id="lcd" width="320" height="96"></canvas>
     <div id="auth-gate">
       <button id="auth-button">&#9654; CONNECT SPOTIFY</button>
     </div>
