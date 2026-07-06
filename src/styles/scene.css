@@ -91,7 +91,10 @@
   border: 14px solid rgba(255, 255, 255, 0.35); /* clear hub ring */
 }
 
+/* placeholder tray look — delete when tray.png lands as background-image */
 #tray {
+  background: var(--surface);
+  border: 1px solid var(--muted);
   transition: transform 600ms cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 #tray.tray-open {
