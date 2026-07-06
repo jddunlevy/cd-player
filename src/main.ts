@@ -68,13 +68,18 @@ function showArtDirect(np: NowPlaying): void {
 
 function onTrackChange(_prev: NowPlaying | null, next: NowPlaying): void {
   // serialize sequences; rapid skips play out in order, never overlapping
-  sequence = sequence.then(async () => {
-    sequencing = true;
-    shownArtId = next.id;
-    await changeDisc(tray, disc, next.artUrl);
-    sequencing = false;
-    applyState(latest); // reconcile with whatever happened meanwhile
-  });
+  sequence = sequence
+    .then(async () => {
+      sequencing = true;
+      try {
+        shownArtId = next.id;
+        await changeDisc(tray, disc, next.artUrl);
+      } finally {
+        sequencing = false;
+        applyState(latest); // reconcile with whatever happened meanwhile
+      }
+    })
+    .catch(() => {}); // prevent rejection from poisoning subsequent chain links
 }
 
 // hide cursor after 3s idle (it's a wall display)
@@ -109,7 +114,7 @@ async function boot(): Promise<void> {
   poller.start();
 
   let tick = 0;
-  setInterval(() => lcd.render(latest, tick++), 100);
+  setInterval(() => lcd.render(latest, (tick = (tick + 1) % 100_000)), 100);
 }
 
 void boot();

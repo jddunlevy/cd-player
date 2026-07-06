@@ -91,13 +91,22 @@ export class Lcd {
     c.fillText(time, LCD_W - PAD - c.measureText(time).width, ARTIST_Y);
 
     // PAUSE blink / stale ERR flag, top-right
-    if (state.status === 'paused' && Math.floor(tick / 5) % 2 === 0) {
-      c.font = '16px VT323';
-      c.fillText('PAUSE', LCD_W - PAD - c.measureText('PAUSE').width, 16);
-    }
-    if (state.stale) {
-      c.font = '16px VT323';
-      c.fillText('ERR', LCD_W - PAD - c.measureText('ERR').width, 16);
+    // When both apply, render ERR at the far right and PAUSE to its left with
+    // a small gap so the two labels never overlap.
+    c.font = '16px VT323';
+    const bothFlags =
+      state.stale && state.status === 'paused' && Math.floor(tick / 5) % 2 === 0;
+    if (bothFlags) {
+      const errW = c.measureText('ERR').width;
+      c.fillText('ERR', LCD_W - PAD - errW, 16);
+      c.fillText('PAUSE', LCD_W - PAD - errW - 4 - c.measureText('PAUSE').width, 16);
+    } else {
+      if (state.status === 'paused' && Math.floor(tick / 5) % 2 === 0) {
+        c.fillText('PAUSE', LCD_W - PAD - c.measureText('PAUSE').width, 16);
+      }
+      if (state.stale) {
+        c.fillText('ERR', LCD_W - PAD - c.measureText('ERR').width, 16);
+      }
     }
 
     // chunky progress bar
