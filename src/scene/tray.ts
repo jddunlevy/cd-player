@@ -18,10 +18,14 @@ function afterTransition(el: HTMLElement, timeoutMs: number): Promise<void> {
     const finish = () => {
       if (done) return;
       done = true;
-      el.removeEventListener('transitionend', finish);
+      el.removeEventListener('transitionend', onTransitionEnd);
       resolve();
     };
-    el.addEventListener('transitionend', finish);
+    const onTransitionEnd = (e: TransitionEvent) => {
+      if (e.propertyName !== 'transform') return;
+      finish();
+    };
+    el.addEventListener('transitionend', onTransitionEnd);
     setTimeout(finish, timeoutMs + 100); // fallback if transitionend is missed
   });
 }
