@@ -46,7 +46,7 @@ describe('PlayerPoller', () => {
     np({ fetchedAt: Date.now(), ...over });
 
   function makePoller(results: FetchResult[]) {
-    const fetchNow = vi.fn(async () => results.shift() ?? results[0] ?? { ok: true as const, np: null });
+    const fetchNow = vi.fn(async (): Promise<FetchResult> => results.shift() ?? results[0] ?? { ok: true, np: null });
     const onUpdate = vi.fn();
     const onTrackChange = vi.fn();
     const p = new PlayerPoller(fetchNow, onUpdate, onTrackChange);
@@ -143,9 +143,9 @@ describe('PlayerPoller', () => {
       { ok: true, np: fresh() },
       { ok: true, np: fresh() },
     ];
-    const fetchNow = vi.fn(async () => {
+    const fetchNow = vi.fn(async (): Promise<FetchResult> => {
       // Immediate return, but the point is the polling flag lifecycle
-      return fetchResults.shift() ?? { ok: true, np: null };
+      return (fetchResults.shift() ?? { ok: true, np: null }) as FetchResult;
     });
     const onUpdate = vi.fn();
     const onTrackChange = vi.fn();

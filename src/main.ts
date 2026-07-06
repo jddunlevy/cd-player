@@ -1,4 +1,4 @@
-import '@fontsource/vt323';
+import '@fontsource/vt323/index.css';
 import './styles/theme.css';
 import './styles/scene.css';
 import { fitStage } from './scene/stage';
