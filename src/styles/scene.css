@@ -90,3 +90,10 @@
   background: var(--bg); /* reads as the spindle hole against the tray */
   border: 14px solid rgba(255, 255, 255, 0.35); /* clear hub ring */
 }
+
+#tray {
+  transition: transform 600ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+#tray.tray-open {
+  transform: translateY(340px);
+}
