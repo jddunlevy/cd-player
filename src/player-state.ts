@@ -43,6 +43,7 @@ export class PlayerPoller {
   ) {}
 
   start(): void {
+    if (this.tickTimer) return;
     this.tickTimer = setInterval(() => this.tick(), TICK_MS);
     void this.poll();
   }
@@ -52,6 +53,7 @@ export class PlayerPoller {
     if (this.tickTimer) clearInterval(this.tickTimer);
     this.pollTimer = null;
     this.tickTimer = null;
+    this.polling = false;
   }
 
   private emit(): void {
