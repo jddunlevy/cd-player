@@ -45,3 +45,48 @@
   transition: color 80ms, background-color 80ms;
 }
 #auth-button:hover { background: var(--accent); color: var(--surface); }
+
+/* Disc sits inside #tray; both dimensions equal -> circle */
+#disc {
+  position: absolute;
+  left: 100px;
+  top: 20px;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%; /* physical-object exception to the no-radius rule */
+  overflow: hidden;
+  background:
+    conic-gradient(#cfd4c8, #f2f4ee, #b9beb2, #eef0ea, #cfd4c8); /* bare silver */
+  will-change: transform;
+}
+
+#disc .art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 200ms linear;
+}
+
+/* pressed-CD look: clear plastic ring at edge + hub */
+#disc-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 10px solid rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+}
+
+#disc-hole {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88px;
+  height: 88px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--bg); /* reads as the spindle hole against the tray */
+  border: 14px solid rgba(255, 255, 255, 0.35); /* clear hub ring */
+}

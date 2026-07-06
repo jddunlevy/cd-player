@@ -3,6 +3,7 @@ import './styles/theme.css';
 import './styles/scene.css';
 import { fitStage } from './scene/stage';
 import { Lcd } from './scene/lcd';
+import { Disc } from './scene/disc';
 
 const stage = document.getElementById('stage')!;
 fitStage(stage);
@@ -23,3 +24,9 @@ document.fonts.load('24px VT323').then(() => {
     progressMs: 43_000, stale: false,
   }, tick++), 100);
 });
+
+// TEMPORARY: Visual test for Disc
+const disc = new Disc(document.getElementById('disc')!);
+disc.setArt('https://i.scdn.co/image/ab67616d0000b273fc2101e6889d6ce9025f85f2');
+disc.play();
+setTimeout(() => disc.pause(), 6000); // watch the decel
