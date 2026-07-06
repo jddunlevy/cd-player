@@ -29,4 +29,9 @@ describe('stepSpin', () => {
     expect(s.angleDeg).toBeGreaterThanOrEqual(0);
     expect(s.angleDeg).toBeLessThan(360);
   });
+  it('handles negative initial angle', () => {
+    const s = stepSpin({ angleDeg: -45, rps: 0 }, 0, 1);
+    expect(s.angleDeg).toBeGreaterThanOrEqual(0);
+    expect(s.angleDeg).toBeLessThan(360);
+  });
 });

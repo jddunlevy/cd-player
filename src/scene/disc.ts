@@ -14,7 +14,7 @@ export function stepSpin(
   const rps = current.rps + (targetRps - current.rps) * k;
   // integrate with average speed over the step for smoothness
   const avg = (current.rps + rps) / 2;
-  const angleDeg = (current.angleDeg + avg * 360 * (dtMs / 1000)) % 360;
+  const angleDeg = ((current.angleDeg + avg * 360 * (dtMs / 1000)) % 360 + 360) % 360;
   return { angleDeg, rps };
 }
 
@@ -55,9 +55,11 @@ export class Disc {
     const back = this.frontIsA ? this.artB : this.artA;
     if (url) {
       back.src = url;
-      back.style.opacity = '1';
-      front.style.opacity = '0';
-      this.frontIsA = !this.frontIsA;
+      back.onload = () => {
+        back.style.opacity = '1';
+        front.style.opacity = '0';
+        this.frontIsA = !this.frontIsA;
+      };
     } else {
       this.artA.style.opacity = '0';
       this.artB.style.opacity = '0';
