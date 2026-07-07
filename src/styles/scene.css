@@ -20,7 +20,7 @@
   transition: opacity 500ms linear;
 }
 
-#jellyfish {
+#field {
   inset: 0;
   pointer-events: none;
 }
@@ -207,7 +207,7 @@
   color: var(--surface);
 }
 
-#btn-moon { cursor: pointer; }
+#btn-moon, #btn-fish { cursor: pointer; }
 
 /* Theme tokens retint per album; let every token-styled element glide with
    the 500ms background crossfade instead of snapping. */

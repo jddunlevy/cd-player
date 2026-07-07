@@ -1,10 +1,5 @@
-import { STAGE_W, STAGE_H } from '../config';
-
-// character grid over the 2560x1440 stage
-export const CELL_W = 16;
-export const CELL_H = 20;
-export const GRID_W = STAGE_W / CELL_W; // 160
-export const GRID_H = STAGE_H / CELL_H; // 72
+import { GRID_W, GRID_H } from './grid';
+import { AsciiField } from './field';
 
 export interface Jelly {
   baseX: number;    // drift center (columns)
@@ -151,54 +146,23 @@ export function stepJelly(j: Jelly, dtSec: number, rng: () => number): Jelly {
 
 // ---- canvas field renderer (verified visually, not unit-tested) ----
 
-const FRAME_MS = 1000 / 12; // chunky flipbook cadence suits ASCII
-
-export class JellyfishField {
-  private ctx: CanvasRenderingContext2D;
+export class JellyfishField extends AsciiField {
   private jellies: Jelly[];
-  private last = 0;
-  private ink = 'rgb(0 0 0)'; // default theme bg is pale -> black ink
 
   constructor(
     canvas: HTMLCanvasElement,
     count = 12,
     private rng: () => number = Math.random,
   ) {
-    this.ctx = canvas.getContext('2d')!;
+    super(canvas);
     this.jellies = Array.from({ length: count }, () => makeJelly(rng, true));
-    requestAnimationFrame(this.frame);
   }
 
-  /** Swap ink when the background changes (black on light, white on dark). */
-  setInk(color: string): void {
-    this.ink = color;
+  protected step(dtSec: number): void {
+    this.jellies = this.jellies.map((j) => stepJelly(j, dtSec, this.rng));
   }
 
-  private frame = (t: number): void => {
-    if (!this.last) this.last = t;
-    const elapsed = t - this.last;
-    if (elapsed >= FRAME_MS) {
-      this.last = t - (elapsed % FRAME_MS);
-      const dt = Math.min(elapsed, 250) / 1000;
-      this.jellies = this.jellies.map((j) => stepJelly(j, dt, this.rng));
-      this.draw();
-    }
-    requestAnimationFrame(this.frame);
-  };
-
-  private putChar(ch: string, cx: number, cy: number): void {
-    if (cx < 0 || cx >= GRID_W || cy < -1 || cy > GRID_H) return;
-    this.ctx.fillText(ch, (cx + 0.5) * CELL_W, (cy + 0.5) * CELL_H);
-  }
-
-  private draw(): void {
-    const c = this.ctx;
-    c.clearRect(0, 0, STAGE_W, STAGE_H);
-    c.fillStyle = this.ink;
-    c.font = '26px VT323, monospace';
-    c.textAlign = 'center';
-    c.textBaseline = 'middle';
-
+  protected draw(c: CanvasRenderingContext2D): void {
     for (const j of this.jellies) {
       const rows = bellRows(j.radius, pulseQ(j));
       const w = (rows[0].length - 1) / 2;
@@ -218,6 +182,5 @@ export class JellyfishField {
         this.putChar(g.ch, gx + g.dx, root + g.dy);
       }
     }
-    c.globalAlpha = 1;
   }
 }

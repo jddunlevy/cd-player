@@ -9,6 +9,7 @@ import { fetchNowPlaying, type NowPlaying } from './spotify';
 import { PlayerPoller, type DisplayState } from './player-state';
 import { ArtLayers } from './scene/art';
 import { JellyfishField } from './scene/jellyfish';
+import { FishField } from './scene/fish';
 import {
   extractAlbumColors, paletteFromAlbum, inkForBackground, inkForDark,
   luminance, toCss, type Palette, type RGB,
@@ -19,9 +20,9 @@ const stage = document.getElementById('stage')!;
 fitStage(stage);
 
 const art = new ArtLayers(document.getElementById('art-well')!);
-const jellies = new JellyfishField(
-  document.getElementById('jellyfish') as HTMLCanvasElement,
-);
+const sceneCanvas = document.getElementById('field') as HTMLCanvasElement;
+const jellies = new JellyfishField(sceneCanvas);
+const fish = new FishField(sceneCanvas);
 const bgA = document.getElementById('bg-a')!;
 const bgB = document.getElementById('bg-b')!;
 const artistText = document.getElementById('artist-text')!;
@@ -30,15 +31,26 @@ const statusEl = document.getElementById('status')!;
 const slider = document.getElementById('slider')!;
 const playBtn = document.getElementById('btn-play')!;
 const moonBtn = document.getElementById('btn-moon')!;
+const fishBtn = document.getElementById('btn-fish')!;
 const gate = document.getElementById('auth-gate')!;
 const authButton = document.getElementById('auth-button')!;
 
 const LS_DARK = 'cdp.dark';
+const LS_SCENE = 'cdp.scene';
 
 let shownArtId: string | null = null;
 let bgFrontIsA = false;
 let lastPair: [RGB, RGB] | null = null;
 let dark = localStorage.getItem(LS_DARK) === '1';
+let fishy = localStorage.getItem(LS_SCENE) === 'fish';
+
+const activeField = () => (fishy ? fish : jellies);
+
+/** Both fields keep the same ink so toggling scenes never desyncs color. */
+function setInk(color: string): void {
+  jellies.setInk(color);
+  fish.setInk(color);
+}
 
 /** Crossfade the stage background to a new two-stop vertical ombre. */
 function setBackground(top: string, bottom: string): void {
@@ -64,14 +76,14 @@ function applyPalette(p: Palette): void {
 function applyTheme(): void {
   if (dark) {
     setBackground('rgb(0 0 0)', 'rgb(0 0 0)');
-    jellies.setInk(lastPair ? inkForDark(lastPair) : 'rgb(255 255 255)');
+    setInk(lastPair ? inkForDark(lastPair) : 'rgb(255 255 255)');
   } else if (lastPair) {
     const ombre = [...lastPair].sort((a, b) => luminance(b) - luminance(a));
     setBackground(toCss(ombre[0]), toCss(ombre[1])); // lighter on top
-    jellies.setInk(inkForBackground(lastPair));
+    setInk(inkForBackground(lastPair));
   } else {
     setBackground('var(--bg)', 'var(--bg)');
-    jellies.setInk('rgb(0 0 0)'); // default theme bg is pale
+    setInk('rgb(0 0 0)'); // default theme bg is pale
   }
 }
 
@@ -135,6 +147,16 @@ moonBtn.addEventListener('click', () => {
   applyTheme();
 });
 if (dark) applyTheme();
+
+fishBtn.classList.toggle('lit', fishy);
+fishBtn.addEventListener('click', () => {
+  activeField().stop();
+  fishy = !fishy;
+  localStorage.setItem(LS_SCENE, fishy ? 'fish' : 'jelly');
+  fishBtn.classList.toggle('lit', fishy);
+  activeField().start();
+});
+activeField().start();
 
 async function boot(): Promise<void> {
   await handleCallbackIfPresent();

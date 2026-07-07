@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   bellRows, bellHeight, pulseQ, tentacleOffsets, tentacleLen, tentacleGlyphs,
-  makeJelly, stepJelly, totalRows, GRID_H, GRID_W, type Jelly,
+  makeJelly, stepJelly, totalRows, type Jelly,
 } from '../src/scene/jellyfish';
+import { GRID_H, GRID_W } from '../src/scene/grid';
 
 const MIRROR: Record<string, string> = {
   '(': ')', ')': '(', '/': '\\', '\\': '/',
