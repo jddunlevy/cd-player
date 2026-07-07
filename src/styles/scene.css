@@ -139,7 +139,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  background: color-mix(in srgb, var(--bg) 22.5%, transparent);
+  background: color-mix(in srgb, var(--bg) 35%, transparent);
   border: 1px solid var(--muted);
   padding: 8px 20px;
 }
