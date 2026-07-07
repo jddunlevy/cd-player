@@ -39,7 +39,6 @@ export class PlayerPoller {
   constructor(
     private fetchNow: () => Promise<FetchResult>,
     private onUpdate: (s: DisplayState) => void,
-    private onTrackChange: (prev: NowPlaying | null, next: NowPlaying) => void,
   ) {}
 
   start(): void {
@@ -91,12 +90,7 @@ export class PlayerPoller {
 
     if (result.ok) {
       this.lastPollFailed = false;
-      const prev = this.np;
-      const next = result.np;
-      if (next && next.kind !== 'ad' && next.id !== prev?.id && prev !== null) {
-        this.onTrackChange(prev, next);
-      }
-      this.np = next;
+      this.np = result.np;
       this.endPolled = false;
       this.schedule(POLL_INTERVAL_MS);
     } else {

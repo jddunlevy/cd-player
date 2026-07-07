@@ -17,11 +17,11 @@ export interface TokenResponse {
   expires_in: number;
 }
 
-export function randomVerifier(length = 64): string {
+export function randomVerifier(): string {
   // 64 chars: 256 % 64 === 0, so byte % length is uniform
   const chars =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-  const bytes = crypto.getRandomValues(new Uint8Array(length));
+  const bytes = crypto.getRandomValues(new Uint8Array(64));
   return Array.from(bytes, (b) => chars[b % chars.length]).join('');
 }
 
@@ -93,9 +93,9 @@ async function requestTokens(body: URLSearchParams): Promise<Tokens> {
 }
 
 /** Call on boot. Exchanges ?code= if present; cleans the URL. */
-export async function handleCallbackIfPresent(): Promise<boolean> {
+export async function handleCallbackIfPresent(): Promise<void> {
   const code = new URLSearchParams(location.search).get('code');
-  if (!code) return false;
+  if (!code) return;
   const verifier = localStorage.getItem(LS_VERIFIER) ?? '';
   await requestTokens(
     new URLSearchParams({
@@ -108,7 +108,6 @@ export async function handleCallbackIfPresent(): Promise<boolean> {
   );
   localStorage.removeItem(LS_VERIFIER);
   history.replaceState(null, '', '/');
-  return true;
 }
 
 export async function getAccessToken(): Promise<string> {

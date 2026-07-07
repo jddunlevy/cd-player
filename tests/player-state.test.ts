@@ -48,9 +48,8 @@ describe('PlayerPoller', () => {
   function makePoller(results: FetchResult[]) {
     const fetchNow = vi.fn(async (): Promise<FetchResult> => results.shift() ?? results[0] ?? { ok: true, np: null });
     const onUpdate = vi.fn();
-    const onTrackChange = vi.fn();
-    const p = new PlayerPoller(fetchNow, onUpdate, onTrackChange);
-    return { p, fetchNow, onUpdate, onTrackChange };
+    const p = new PlayerPoller(fetchNow, onUpdate);
+    return { p, fetchNow, onUpdate };
   }
 
   it('polls immediately on start, then every 5s', async () => {
@@ -60,31 +59,6 @@ describe('PlayerPoller', () => {
     expect(fetchNow).toHaveBeenCalledTimes(1);
     await vi.advanceTimersByTimeAsync(10_000);
     expect(fetchNow).toHaveBeenCalledTimes(3);
-    p.stop();
-  });
-
-  it('fires onTrackChange when id changes, not on first load', async () => {
-    const a = fresh({ id: 'a' });
-    const b = fresh({ id: 'b' });
-    const { p, onTrackChange } = makePoller([
-      { ok: true, np: a }, { ok: true, np: b },
-    ]);
-    p.start();
-    await vi.advanceTimersByTimeAsync(0);
-    expect(onTrackChange).not.toHaveBeenCalled();
-    await vi.advanceTimersByTimeAsync(5_000);
-    expect(onTrackChange).toHaveBeenCalledWith(a, b);
-    p.stop();
-  });
-
-  it('does not fire onTrackChange for ads', async () => {
-    const { p, onTrackChange } = makePoller([
-      { ok: true, np: fresh({ id: 'a' }) },
-      { ok: true, np: fresh({ id: 'ad', kind: 'ad' }) },
-    ]);
-    p.start();
-    await vi.advanceTimersByTimeAsync(5_000);
-    expect(onTrackChange).not.toHaveBeenCalled();
     p.stop();
   });
 
@@ -148,8 +122,7 @@ describe('PlayerPoller', () => {
       return (fetchResults.shift() ?? { ok: true, np: null }) as FetchResult;
     });
     const onUpdate = vi.fn();
-    const onTrackChange = vi.fn();
-    const p = new PlayerPoller(fetchNow, onUpdate, onTrackChange);
+    const p = new PlayerPoller(fetchNow, onUpdate);
 
     p.start();
     await vi.advanceTimersByTimeAsync(0);

@@ -1,7 +1,7 @@
 # cd-player
 
-Spotify now-playing display styled as a photo-real CD player.
-Fullscreen it on a second monitor.
+Spotify now-playing display styled as a retro CD Player window over an
+album-tinted ocean of ASCII jellyfish. Fullscreen it on a second monitor.
 
 ## Setup (once)
 1. https://developer.spotify.com/dashboard -> create app (development mode
@@ -20,7 +20,3 @@ F11 for fullscreen on the target monitor.
 
 ## Test
     npm test
-
-## Assets
-Placeholder frames render until real photo cutouts land -- see
-`docs/assets-spec.md` for the shopping list.

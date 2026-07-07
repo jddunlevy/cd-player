@@ -118,7 +118,6 @@ async function boot(): Promise<void> {
   const poller = new PlayerPoller(
     () => fetchNowPlaying(getAccessToken),
     applyState,
-    () => {}, // art swaps are handled directly in applyState
   );
   poller.start();
 }
