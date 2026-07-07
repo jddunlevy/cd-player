@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   dominantPair, luminance, toCss, rgbToHsl, paletteFromAlbum, inkForBackground,
+  inkForDark,
   type RGB,
 } from '../src/scene/colors';
 
@@ -85,6 +86,20 @@ describe('inkForBackground', () => {
     expect(inkForBackground([[160, 160, 160], [140, 140, 140]])).toBe('rgb(255 255 255)'));
   it('white ink for a light/dark split (avg mid)', () =>
     expect(inkForBackground([[255, 255, 255], [0, 0, 0]])).toBe('rgb(255 255 255)'));
+});
+
+describe('inkForDark', () => {
+  it('uses the dominant (first) color, not the runner-up', () => {
+    // dominant red, runner-up blue -> red-hued ink
+    expect(inkForDark([[200, 30, 30], [30, 30, 200]])).toMatch(/^hsl\(0 /);
+  });
+  it('lifts a dark dominant color so it reads on black', () => {
+    // dark navy (l ~ 16%) must be floored to 50%
+    expect(inkForDark([[20, 20, 60], [200, 200, 200]])).toMatch(/ 50%\)$/);
+  });
+  it('keeps an already-light dominant color as-is', () => {
+    expect(inkForDark([[200, 200, 240], [0, 0, 0]])).toMatch(/ 86%\)$/);
+  });
 });
 
 describe('paletteFromAlbum', () => {

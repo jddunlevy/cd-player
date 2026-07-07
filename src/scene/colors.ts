@@ -125,11 +125,20 @@ export function inkForBackground(pair: [RGB, RGB]): string {
   return avg > BLACK_INK_MIN_LUMINANCE ? 'rgb(0 0 0)' : 'rgb(255 255 255)';
 }
 
+const DARK_INK_MIN_L = 0.5; // floor so dark album colors read on black
+
+/** Dark-mode jellyfish ink: the album's dominant color, lifted if too dark. */
+export function inkForDark(pair: [RGB, RGB]): string {
+  const { h, s, l } = rgbToHsl(pair[0]);
+  const lift = Math.max(l, DARK_INK_MIN_L);
+  return `hsl(${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(lift * 100)}%)`;
+}
+
 const SAMPLE = 40; // downscale target; plenty for dominant-color binning
 
 /**
- * Dominant color pair for an image URL, ordered light -> dark for a
- * top-to-bottom ombre. Returns null on any load/CORS failure.
+ * Dominant color pair for an image URL, most frequent first.
+ * Returns null on any load/CORS failure.
  */
 export async function extractAlbumColors(
   url: string,
@@ -153,7 +162,5 @@ export async function extractAlbumColors(
   } catch {
     return null; // canvas tainted (no CORS) — keep current background
   }
-  const pair = dominantPair(data);
-  pair.sort((a, b) => luminance(b) - luminance(a)); // lighter on top
-  return pair;
+  return dominantPair(data);
 }

@@ -10,7 +10,8 @@ import { PlayerPoller, type DisplayState } from './player-state';
 import { ArtLayers } from './scene/art';
 import { JellyfishField } from './scene/jellyfish';
 import {
-  extractAlbumColors, paletteFromAlbum, inkForBackground, toCss, type Palette,
+  extractAlbumColors, paletteFromAlbum, inkForBackground, inkForDark,
+  luminance, toCss, type Palette, type RGB,
 } from './scene/colors';
 import { panelText, statusFlag, progressFraction } from './scene/panel';
 
@@ -28,11 +29,16 @@ const trackText = document.getElementById('track-text')!;
 const statusEl = document.getElementById('status')!;
 const slider = document.getElementById('slider')!;
 const playBtn = document.getElementById('btn-play')!;
+const moonBtn = document.getElementById('btn-moon')!;
 const gate = document.getElementById('auth-gate')!;
 const authButton = document.getElementById('auth-button')!;
 
+const LS_DARK = 'cdp.dark';
+
 let shownArtId: string | null = null;
 let bgFrontIsA = false;
+let lastPair: [RGB, RGB] | null = null;
+let dark = localStorage.getItem(LS_DARK) === '1';
 
 /** Crossfade the stage background to a new two-stop vertical ombre. */
 function setBackground(top: string, bottom: string): void {
@@ -54,6 +60,21 @@ function applyPalette(p: Palette): void {
   root.setProperty('--accent', p.accent);
 }
 
+/** Background + jellyfish ink for the current mode and album colors. */
+function applyTheme(): void {
+  if (dark) {
+    setBackground('rgb(0 0 0)', 'rgb(0 0 0)');
+    jellies.setInk(lastPair ? inkForDark(lastPair) : 'rgb(255 255 255)');
+  } else if (lastPair) {
+    const ombre = [...lastPair].sort((a, b) => luminance(b) - luminance(a));
+    setBackground(toCss(ombre[0]), toCss(ombre[1])); // lighter on top
+    jellies.setInk(inkForBackground(lastPair));
+  } else {
+    setBackground('var(--bg)', 'var(--bg)');
+    jellies.setInk('rgb(0 0 0)'); // default theme bg is pale
+  }
+}
+
 function showArt(np: NowPlaying): void {
   if (shownArtId === np.id) return;
   shownArtId = np.id;
@@ -63,9 +84,9 @@ function showArt(np: NowPlaying): void {
   void extractAlbumColors(np.artUrl).then((pair) => {
     // ignore results that arrive after another track took over
     if (!pair || shownArtId !== forId) return;
-    setBackground(toCss(pair[0]), toCss(pair[1]));
+    lastPair = pair;
     applyPalette(paletteFromAlbum(pair));
-    jellies.setInk(inkForBackground(pair));
+    applyTheme();
   });
 }
 
@@ -105,6 +126,15 @@ document.addEventListener('mousemove', () => {
     document.body.style.cursor = 'none';
   }, 3000);
 });
+
+moonBtn.classList.toggle('lit', dark);
+moonBtn.addEventListener('click', () => {
+  dark = !dark;
+  localStorage.setItem(LS_DARK, dark ? '1' : '0');
+  moonBtn.classList.toggle('lit', dark);
+  applyTheme();
+});
+if (dark) applyTheme();
 
 async function boot(): Promise<void> {
   await handleCallbackIfPresent();
