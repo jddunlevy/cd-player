@@ -12,15 +12,30 @@
 
 #stage > * { position: absolute; }
 
+/* ---- album-colored ombre, crossfading pair over the base bg ---- */
+
+.bg {
+  inset: 0;
+  opacity: 0;
+  transition: opacity 500ms linear;
+}
+
+#jellyfish {
+  inset: 0;
+  pointer-events: none;
+}
+
 /* ---- the CD Player window ---- */
 
+/* glass window: ombre and jellyfish shimmer through the blur */
 #window {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 1720px;
   height: 840px;
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
   border: 1px solid var(--text);
   display: flex;
   flex-direction: column;
@@ -71,30 +86,18 @@
   min-height: 0;
 }
 
-/* ---- left: album art well with the disc ---- */
+/* ---- left: album art square ---- */
 
 #art-well {
+  position: relative;
   width: 704px;
   flex: none;
-  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 35%, transparent);
   border: 1px solid var(--muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#disc {
-  position: relative;
-  width: 640px;
-  height: 640px;
-  border-radius: 50%; /* physical-object exception to the no-radius rule */
   overflow: hidden;
-  background:
-    conic-gradient(#cfd4c8, #f2f4ee, #b9beb2, #eef0ea, #cfd4c8); /* bare silver */
-  will-change: transform;
 }
 
-#disc .art {
+#art-well .art {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -102,27 +105,6 @@
   object-fit: cover;
   opacity: 0;
   transition: opacity 200ms linear;
-}
-
-/* pressed-CD look: clear plastic ring at edge + hub */
-#disc-rim {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 12px solid rgba(255, 255, 255, 0.25);
-  pointer-events: none;
-}
-
-#disc-hole {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 108px;
-  height: 108px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--bg); /* reads as the spindle hole against the well */
-  border: 16px solid rgba(255, 255, 255, 0.35); /* clear hub ring */
 }
 
 /* ---- right: fields, seek slider, transport ---- */
@@ -157,7 +139,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 45%, transparent);
   border: 1px solid var(--muted);
   padding: 8px 20px;
 }
@@ -215,15 +197,23 @@
   font-family: var(--mono);
   font-size: 26px;
   color: var(--text);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 45%, transparent);
   border: 1px solid var(--text);
   cursor: default;
-  transition: color 80ms, background-color 80ms;
 }
 
 .t-btn.lit {
   background: var(--accent);
   color: var(--surface);
+}
+
+/* Theme tokens retint per album; let every token-styled element glide with
+   the 500ms background crossfade instead of snapping. */
+#stage, #window, #titlebar, .tb-btn, #art-well,
+.field-label, .field-box, .field-box > span:first-child, .field-arrow,
+#slider-line, #slider-thumb, .t-btn {
+  transition: background-color 500ms linear, color 500ms linear,
+    border-color 500ms linear;
 }
 
 /* ---- auth gate ---- */

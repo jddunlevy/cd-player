@@ -6,6 +6,9 @@
 </head>
 <body>
   <div id="stage">
+    <div class="bg" id="bg-a"></div>
+    <div class="bg" id="bg-b"></div>
+    <canvas id="jellyfish" width="2560" height="1440"></canvas>
     <div id="window">
       <div id="titlebar">
         <span id="window-title">&#8857; CD PLAYER</span>
@@ -18,12 +21,8 @@
       </div>
       <div id="window-body">
         <div id="art-well">
-          <div id="disc">
-            <img id="art-a" class="art" alt="" draggable="false" />
-            <img id="art-b" class="art" alt="" draggable="false" />
-            <div id="disc-rim"></div>
-            <div id="disc-hole"></div>
-          </div>
+          <img id="art-a" class="art" alt="" draggable="false" />
+          <img id="art-b" class="art" alt="" draggable="false" />
         </div>
         <div id="panel">
           <div class="field-row">
@@ -39,11 +38,7 @@
             <div id="slider-thumb"></div>
           </div>
           <div id="transport">
-            <button class="t-btn" tabindex="-1">&#9664;&#9664;</button>
-            <button class="t-btn" tabindex="-1">&#9654;&#9654;</button>
             <button class="t-btn" id="btn-play" tabindex="-1">&#9654;</button>
-            <button class="t-btn" tabindex="-1">&#9632;</button>
-            <button class="t-btn" tabindex="-1">&#9679;</button>
           </div>
         </div>
       </div>
