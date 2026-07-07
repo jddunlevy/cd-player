@@ -20,9 +20,12 @@ const stage = document.getElementById('stage')!;
 fitStage(stage);
 
 const art = new ArtLayers(document.getElementById('art-well')!);
-const sceneCanvas = document.getElementById('field') as HTMLCanvasElement;
-const jellies = new JellyfishField(sceneCanvas);
-const fish = new FishField(sceneCanvas);
+const jellies = new JellyfishField(
+  document.getElementById('field-jelly') as HTMLCanvasElement,
+);
+const fish = new FishField(
+  document.getElementById('field-fish') as HTMLCanvasElement,
+);
 const bgA = document.getElementById('bg-a')!;
 const bgB = document.getElementById('bg-b')!;
 const artistText = document.getElementById('artist-text')!;
@@ -38,13 +41,15 @@ const authButton = document.getElementById('auth-button')!;
 const LS_DARK = 'cdp.dark';
 const LS_SCENE = 'cdp.scene';
 
+type Scene = 'jelly' | 'fish' | 'both';
+const storedScene = localStorage.getItem(LS_SCENE);
+let scene: Scene =
+  storedScene === 'fish' || storedScene === 'both' ? storedScene : 'jelly';
+
 let shownArtId: string | null = null;
 let bgFrontIsA = false;
 let lastPair: [RGB, RGB] | null = null;
 let dark = localStorage.getItem(LS_DARK) === '1';
-let fishy = localStorage.getItem(LS_SCENE) === 'fish';
-
-const activeField = () => (fishy ? fish : jellies);
 
 /** Both fields keep the same ink so toggling scenes never desyncs color. */
 function setInk(color: string): void {
@@ -148,15 +153,21 @@ moonBtn.addEventListener('click', () => {
 });
 if (dark) applyTheme();
 
-fishBtn.classList.toggle('lit', fishy);
+/** Each scene runs on its own canvas layer; 'both' runs the two together. */
+function applyScene(): void {
+  if (scene === 'fish') jellies.stop(); else jellies.start();
+  if (scene === 'jelly') fish.stop(); else fish.start();
+  fishBtn.classList.toggle('lit', scene !== 'jelly');
+  fishBtn.textContent = scene === 'both' ? '\u224B' : '\u2248'; // ≋ / ≈
+  fishBtn.title = `scene: ${scene}`;
+}
+
 fishBtn.addEventListener('click', () => {
-  activeField().stop();
-  fishy = !fishy;
-  localStorage.setItem(LS_SCENE, fishy ? 'fish' : 'jelly');
-  fishBtn.classList.toggle('lit', fishy);
-  activeField().start();
+  scene = scene === 'jelly' ? 'fish' : scene === 'fish' ? 'both' : 'jelly';
+  localStorage.setItem(LS_SCENE, scene);
+  applyScene();
 });
-activeField().start();
+applyScene();
 
 async function boot(): Promise<void> {
   await handleCallbackIfPresent();

@@ -20,7 +20,7 @@
   transition: opacity 500ms linear;
 }
 
-#field {
+.field {
   inset: 0;
   pointer-events: none;
 }
