@@ -76,14 +76,15 @@ describe('rgbToHsl', () => {
 });
 
 describe('inkForBackground', () => {
-  it('black ink on a light background', () =>
+  it('black ink only on very light backgrounds', () =>
     expect(inkForBackground([[230, 230, 220], [180, 200, 190]])).toBe('rgb(0 0 0)'));
   it('white ink on a dark background', () =>
     expect(inkForBackground([[30, 30, 60], [10, 10, 20]])).toBe('rgb(255 255 255)'));
-  it('averages the two stops (light top, dark bottom -> mid)', () => {
-    // white + black average to exactly mid -> not above threshold -> white
-    expect(inkForBackground([[255, 255, 255], [0, 0, 0]])).toBe('rgb(255 255 255)');
-  });
+  it('white ink on a medium-light background (white is preferred)', () =>
+    // avg luminance ~150: above mid-gray but below the 200 black threshold
+    expect(inkForBackground([[160, 160, 160], [140, 140, 140]])).toBe('rgb(255 255 255)'));
+  it('white ink for a light/dark split (avg mid)', () =>
+    expect(inkForBackground([[255, 255, 255], [0, 0, 0]])).toBe('rgb(255 255 255)'));
 });
 
 describe('paletteFromAlbum', () => {

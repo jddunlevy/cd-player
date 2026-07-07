@@ -102,12 +102,12 @@ describe('makeJelly', () => {
   it('spawns within sane bounds', () => {
     for (const r of [0, 0.25, 0.5, 0.75, 0.999]) {
       const j = makeJelly(() => r, true);
-      expect(j.radius).toBeGreaterThanOrEqual(3);
-      expect(j.radius).toBeLessThanOrEqual(6);
+      expect(j.radius).toBeGreaterThanOrEqual(4);
+      expect(j.radius).toBeLessThanOrEqual(7);
       expect(j.baseX).toBeGreaterThan(0);
       expect(j.baseX).toBeLessThan(GRID_W);
-      expect(j.alpha).toBeGreaterThan(0);
-      expect(j.alpha).toBeLessThan(0.5);
+      expect(j.alpha).toBeGreaterThan(0.3);
+      expect(j.alpha).toBeLessThan(0.8);
     }
   });
   it('scatter spawns on screen, otherwise below the fold', () => {

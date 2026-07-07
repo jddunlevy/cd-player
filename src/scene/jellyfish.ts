@@ -115,7 +115,7 @@ export function totalRows(radius: number): number {
 }
 
 export function makeJelly(rng: () => number, scatter: boolean): Jelly {
-  const radius = 3 + Math.floor(rng() * 4); // 3..6
+  const radius = 4 + Math.floor(rng() * 4); // 4..7
   const baseX = 6 + rng() * (GRID_W - 12);
   return {
     baseX,
@@ -129,7 +129,7 @@ export function makeJelly(rng: () => number, scatter: boolean): Jelly {
     driftHz: 0.02 + rng() * 0.03,
     driftPhase: rng() * Math.PI * 2,
     speed: 0.55 + radius * 0.28 + rng() * 0.5,
-    alpha: 0.14 + radius * 0.045, // bigger reads closer: more opaque
+    alpha: 0.3 + radius * 0.06, // bigger reads closer: more opaque
   };
 }
 

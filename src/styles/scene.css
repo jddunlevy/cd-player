@@ -53,15 +53,15 @@
 }
 
 #window-title {
-  font-family: 'VT323', monospace;
-  font-size: 48px;
+  font-family: var(--retro);
+  font-size: 32px;
   letter-spacing: 0.08em;
 }
 
 #status {
   margin-left: auto;
-  font-family: 'VT323', monospace;
-  font-size: 40px;
+  font-family: var(--retro);
+  font-size: 26px;
   letter-spacing: 0.08em;
 }
 
@@ -150,8 +150,8 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-family: 'VT323', monospace;
-  font-size: 52px;
+  font-family: var(--retro);
+  font-size: 34px;
   color: var(--text);
 }
 

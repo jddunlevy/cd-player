@@ -116,10 +116,13 @@ export function paletteFromAlbum(pair: [RGB, RGB]): Palette {
   return out;
 }
 
-/** Black or white, whichever reads better against the ombre pair. */
+// White ink is strongly preferred; black only on genuinely light backgrounds.
+const BLACK_INK_MIN_LUMINANCE = 200;
+
+/** Jellyfish ink against the ombre pair: white unless the bg is very light. */
 export function inkForBackground(pair: [RGB, RGB]): string {
   const avg = (luminance(pair[0]) + luminance(pair[1])) / 2;
-  return avg > 127.5 ? 'rgb(0 0 0)' : 'rgb(255 255 255)';
+  return avg > BLACK_INK_MIN_LUMINANCE ? 'rgb(0 0 0)' : 'rgb(255 255 255)';
 }
 
 const SAMPLE = 40; // downscale target; plenty for dominant-color binning

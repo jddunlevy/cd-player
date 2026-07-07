@@ -7,6 +7,7 @@
   --muted: #5a6b46;
   --accent: #3d5a2a;
   --mono: 'JetBrains Mono', 'Consolas', monospace;
+  --retro: Verdana, Tahoma, Arial, sans-serif; /* early-internet web-safe */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
