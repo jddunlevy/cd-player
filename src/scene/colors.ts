@@ -4,6 +4,8 @@ const BIN_SHIFT = 5;        // 3 bits/channel -> 8 levels -> 512 bins
 const BINS = 8;
 const MIN_DISTANCE = 90;    // euclidean RGB distance for "visually distinct"
 const MIN_ALPHA = 128;
+const CHROMA_MIN = 40;      // max-min channel spread to count as "colorful"
+const CHROMATIC_SHARE = 0.08; // colorful pixel share that outranks neutrals
 
 export function toCss([r, g, b]: RGB): string {
   return `rgb(${r} ${g} ${b})`;
@@ -17,11 +19,16 @@ function distance(a: RGB, b: RGB): number {
   return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 }
 
+function chroma([r, g, b]: RGB): number {
+  return Math.max(r, g, b) - Math.min(r, g, b);
+}
+
 /**
  * Two dominant colors from RGBA pixel data, by coarse-bin frequency.
- * The second color is the most frequent bin visually distinct from the
- * first; if none qualifies (near-monochrome art), a darkened variant of
- * the first is used so the ombre always has two stops.
+ * If enough of the art is chromatic, neutrals (white/black/gray) are
+ * excluded so colorful covers don't yield gray ombres. The second color
+ * is the most frequent bin visually distinct from the first; if none
+ * qualifies, a darkened variant of the first keeps the ombre two-stop.
  */
 export function dominantPair(data: Uint8ClampedArray): [RGB, RGB] {
   const count = new Uint32Array(BINS * BINS * BINS);
@@ -40,7 +47,7 @@ export function dominantPair(data: Uint8ClampedArray): [RGB, RGB] {
     sumB[bin] += b;
   }
 
-  const order = [...count.keys()]
+  let order = [...count.keys()]
     .filter((i) => count[i] > 0)
     .sort((a, b) => count[b] - count[a]);
   if (order.length === 0) return [[128, 128, 128], [64, 64, 64]];
@@ -50,6 +57,11 @@ export function dominantPair(data: Uint8ClampedArray): [RGB, RGB] {
     Math.round(sumG[bin] / count[bin]),
     Math.round(sumB[bin] / count[bin]),
   ];
+
+  const total = order.reduce((n, bin) => n + count[bin], 0);
+  const chromatic = order.filter((bin) => chroma(avg(bin)) >= CHROMA_MIN);
+  const share = chromatic.reduce((n, bin) => n + count[bin], 0) / total;
+  if (share >= CHROMATIC_SHARE) order = chromatic;
 
   const first = avg(order[0]);
   for (const bin of order.slice(1)) {

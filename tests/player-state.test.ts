@@ -110,6 +110,20 @@ describe('PlayerPoller', () => {
     p.stop();
   });
 
+  it('pollSoon() polls after the given delay instead of waiting 5s', async () => {
+    const { p, fetchNow } = makePoller([
+      { ok: true, np: fresh() },
+      { ok: true, np: fresh() },
+    ]);
+    p.start();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(fetchNow).toHaveBeenCalledTimes(1);
+    p.pollSoon(300);
+    await vi.advanceTimersByTimeAsync(300);
+    expect(fetchNow).toHaveBeenCalledTimes(2);
+    p.stop();
+  });
+
   it('stop() clears polling flag allowing start() to poll again', async () => {
     // Scenario: if stop() doesn't clear polling flag, subsequent start() will have polling=true
     // and poll() will return early due to the guard at start of poll()

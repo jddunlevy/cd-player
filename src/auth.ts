@@ -65,6 +65,11 @@ export function saveTokens(t: Tokens): void {
   localStorage.setItem(LS_TOKENS, JSON.stringify(t));
 }
 
+/** Drop stored tokens (e.g. when their scope is stale) to force re-login. */
+export function clearTokens(): void {
+  localStorage.removeItem(LS_TOKENS);
+}
+
 export async function beginLogin(): Promise<void> {
   const verifier = randomVerifier();
   localStorage.setItem(LS_VERIFIER, verifier);

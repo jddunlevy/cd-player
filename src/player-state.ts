@@ -55,6 +55,11 @@ export class PlayerPoller {
     this.polling = false;
   }
 
+  /** Re-sync shortly after a playback command instead of waiting a full poll. */
+  pollSoon(delayMs = 300): void {
+    this.schedule(delayMs);
+  }
+
   private emit(): void {
     const now = Date.now();
     this.onUpdate({

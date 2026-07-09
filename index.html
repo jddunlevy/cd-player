@@ -24,6 +24,7 @@
         <div id="art-well">
           <img id="art-a" class="art" alt="" draggable="false" />
           <img id="art-b" class="art" alt="" draggable="false" />
+          <canvas id="art-dither" width="704" height="704"></canvas>
         </div>
         <div id="panel">
           <div class="field-row">
@@ -38,10 +39,15 @@
             <div id="slider-line"></div>
             <div id="slider-thumb"></div>
           </div>
+          <div id="time-readout"></div>
+          <pre id="visualizer"></pre>
           <div id="transport">
-            <button class="t-btn" id="btn-play" tabindex="-1">&#9654;</button>
+            <button class="t-btn" id="btn-prev" tabindex="-1" title="previous">&#9664;&#9664;</button>
+            <button class="t-btn" id="btn-play" tabindex="-1" title="play/pause">&#9654;</button>
+            <button class="t-btn" id="btn-next" tabindex="-1" title="next">&#9654;&#9654;</button>
             <button class="t-btn" id="btn-moon" tabindex="-1" title="dark mode">&#9790;</button>
             <button class="t-btn" id="btn-fish" tabindex="-1" title="fish scene">&#8776;</button>
+            <button class="t-btn" id="btn-dither" tabindex="-1" title="dither art">&#9618;</button>
           </div>
         </div>
       </div>

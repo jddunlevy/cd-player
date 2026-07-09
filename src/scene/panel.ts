@@ -28,6 +28,23 @@ export function statusFlag(s: DisplayState): string {
   return flags.join(' ');
 }
 
+/** Milliseconds as "m:ss", or "h:mm:ss" for hour-plus durations. */
+export function formatTime(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const s = total % 60;
+  const m = Math.floor(total / 60) % 60;
+  const h = Math.floor(total / 3600);
+  const mm = String(m).padStart(2, '0');
+  const ss = String(s).padStart(2, '0');
+  return h > 0 ? `${h}:${mm}:${ss}` : `${m}:${ss}`;
+}
+
+/** "elapsed / total" readout; empty when there's nothing to time. */
+export function timeText(s: DisplayState): string {
+  if (s.status !== 'playing' && s.status !== 'paused') return '';
+  return `${formatTime(s.progressMs)} / ${formatTime(s.np!.durationMs)}`;
+}
+
 /** Seek-slider position in [0, 1]. */
 export function progressFraction(s: DisplayState): number {
   const duration = s.np?.durationMs ?? 0;

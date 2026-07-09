@@ -41,11 +41,13 @@
   flex-direction: column;
 }
 
+/* light mode: accent surfaces go translucent so the scene shows through;
+   dark mode (body.dark overrides below) keeps the solid dark shade */
 #titlebar {
   height: 72px;
   flex: none;
-  background: var(--accent);
-  color: var(--surface);
+  background: color-mix(in srgb, var(--accent) 50%, transparent);
+  color: var(--text);
   display: flex;
   align-items: center;
   gap: 24px;
@@ -70,7 +72,7 @@
 .tb-btn {
   width: 48px;
   height: 48px;
-  border: 1px solid var(--surface);
+  border: 1px solid var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,6 +108,18 @@
   opacity: 0;
   transition: opacity 200ms linear;
 }
+
+#art-dither {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 200ms linear;
+  pointer-events: none;
+}
+
+/* !important beats the inline opacity that ArtLayers sets on the imgs */
+#art-well.dithered .art { opacity: 0 !important; }
+#art-well.dithered #art-dither { opacity: 1; }
 
 /* ---- right: fields, seek slider, transport ---- */
 
@@ -165,6 +179,7 @@
   position: relative;
   height: 56px;
   margin-top: 16px;
+  cursor: pointer;
 }
 
 #slider-line {
@@ -181,12 +196,34 @@
   width: 32px;
   height: 48px;
   left: calc((100% - 32px) * var(--frac, 0));
-  background: var(--accent);
+  background: color-mix(in srgb, var(--accent) 50%, transparent);
   border: 1px solid var(--text);
 }
 
+#time-readout {
+  margin-top: -32px; /* tuck under the slider, inside the 40px panel gap */
+  font-family: var(--retro);
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* stretches to fill the panel; bars sit right above the transport row */
+#visualizer {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 24px;
+  line-height: 1;
+  color: color-mix(in srgb, var(--accent) 50%, transparent);
+  overflow: hidden;
+  user-select: none;
+}
+
 #transport {
-  margin-top: auto;
   display: flex;
   gap: 16px;
 }
@@ -199,21 +236,27 @@
   color: var(--text);
   background: color-mix(in srgb, var(--surface) 22.5%, transparent);
   border: 1px solid var(--text);
-  cursor: default;
+  cursor: pointer;
 }
 
 .t-btn.lit {
-  background: var(--accent);
-  color: var(--surface);
+  background: color-mix(in srgb, var(--accent) 50%, transparent);
+  color: var(--text);
 }
 
-#btn-moon, #btn-fish { cursor: pointer; }
+/* dark mode: restore solid accent surfaces and pale-on-dark text */
+body.dark #titlebar { background: var(--accent); color: var(--surface); }
+body.dark .tb-btn { border-color: var(--surface); }
+body.dark #slider-thumb { background: var(--accent); }
+body.dark .t-btn.lit { background: var(--accent); color: var(--surface); }
+/* dark accent is invisible on black; lift it toward white for the bars */
+body.dark #visualizer { color: color-mix(in srgb, var(--accent) 50%, white); }
 
 /* Theme tokens retint per album; let every token-styled element glide with
    the 500ms background crossfade instead of snapping. */
 #stage, #window, #titlebar, .tb-btn, #art-well,
 .field-label, .field-box, .field-box > span:first-child, .field-arrow,
-#slider-line, #slider-thumb, .t-btn {
+#slider-line, #slider-thumb, #time-readout, #visualizer, .t-btn {
   transition: background-color 500ms linear, color 500ms linear,
     border-color 500ms linear;
 }

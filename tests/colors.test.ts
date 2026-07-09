@@ -54,6 +54,38 @@ describe('dominantPair', () => {
     const data = new Uint8ClampedArray(16); // 4 pixels, alpha 0
     expect(dominantPair(data)).toEqual([[128, 128, 128], [64, 64, 64]]);
   });
+
+  it('prefers chromatic colors over dominant white/black', () => {
+    // mostly-white cover with black text but colorful stripes
+    const data = pixels(
+      [[255, 255, 255], 700],
+      [[10, 10, 10], 200],
+      [[200, 30, 30], 80],
+      [[30, 30, 200], 60],
+    );
+    expect(dominantPair(data)).toEqual([[200, 30, 30], [30, 30, 200]]);
+  });
+
+  it('keeps neutrals for genuinely black/white art', () => {
+    const data = pixels([[255, 255, 255], 700], [[10, 10, 10], 300]);
+    expect(dominantPair(data)).toEqual([[255, 255, 255], [10, 10, 10]]);
+  });
+
+  it('ignores a tiny chromatic speck on monochrome art', () => {
+    // 2% red: not enough to call the album colorful
+    const data = pixels(
+      [[255, 255, 255], 780],
+      [[10, 10, 10], 200],
+      [[200, 30, 30], 20],
+    );
+    expect(dominantPair(data)).toEqual([[255, 255, 255], [10, 10, 10]]);
+  });
+
+  it('darkens the single chromatic color when no second one exists', () => {
+    // colorful enough to go chromatic, but only one distinct color there
+    const data = pixels([[255, 255, 255], 700], [[200, 30, 30], 300]);
+    expect(dominantPair(data)).toEqual([[200, 30, 30], [110, 17, 17]]);
+  });
 });
 
 describe('toCss', () => {

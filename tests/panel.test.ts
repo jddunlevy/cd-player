@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { panelText, statusFlag, progressFraction } from '../src/scene/panel';
+import {
+  panelText, statusFlag, progressFraction, formatTime, timeText,
+} from '../src/scene/panel';
 import type { DisplayState } from '../src/player-state';
 import type { NowPlaying } from '../src/spotify';
 
@@ -58,4 +60,26 @@ describe('progressFraction', () => {
     expect(
       progressFraction({ ...base, np: { ...np, durationMs: 0 }, progressMs: 10 }),
     ).toBe(0));
+});
+
+describe('formatTime', () => {
+  it('zero', () => expect(formatTime(0)).toBe('0:00'));
+  it('sub-minute pads seconds', () => expect(formatTime(7_000)).toBe('0:07'));
+  it('minutes and seconds', () => expect(formatTime(161_000)).toBe('2:41'));
+  it('hour-plus pads minutes', () => expect(formatTime(3_735_000)).toBe('1:02:15'));
+  it('truncates partial seconds', () => expect(formatTime(59_999)).toBe('0:59'));
+  it('clamps negatives to zero', () => expect(formatTime(-500)).toBe('0:00'));
+});
+
+describe('timeText', () => {
+  it('elapsed / total while playing', () =>
+    expect(timeText(base)).toBe('0:50 / 3:20'));
+  it('elapsed / total while paused', () =>
+    expect(timeText({ ...base, status: 'paused' })).toBe('0:50 / 3:20'));
+  it('empty when idle', () =>
+    expect(timeText({ ...base, status: 'idle', np: null, progressMs: 0 })).toBe(''));
+  it('empty on error', () =>
+    expect(timeText({ ...base, status: 'error', np: null })).toBe(''));
+  it('empty during ads', () =>
+    expect(timeText({ ...base, status: 'ad' })).toBe(''));
 });
